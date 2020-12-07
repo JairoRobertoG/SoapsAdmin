@@ -1,0 +1,37 @@
+<h1>{{ soap.name }}</h1>
+
+<div class="ui-rtl" dir="rtl">
+  <p-dialog [(visible)]="display">
+    <p-header>
+      Header content here
+    </p-header>
+    <div>
+      <label>Name: </label>
+      <input [(ngModel)]="soap.name" />
+    </div>
+    
+    <p-footer>
+      <div>
+        <button (click)="sendPostRequest()">Add</button>
+      </div>
+    </p-footer>
+  </p-dialog>
+</div>
+
+<button type="button" (click)="showDialog()" pButton icon="pi pi-info-circle" label="Show"></button>
+
+<button (click)="create()">Create</button>
+
+<p *ngIf="!soaps"><em>Loading...</em></p>
+
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="soaps">
+  <thead>
+    <tr>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let soap of soaps">
+      <td>{{ soap.name }}</td>
+  </tbody>
+</table>
