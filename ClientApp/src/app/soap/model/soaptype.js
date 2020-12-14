@@ -1,0 +1,1 @@
+//# sourceMappingURL=soaptype.js.map

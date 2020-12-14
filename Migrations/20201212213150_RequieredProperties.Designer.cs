@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Soaps.Model.Data;
 
 namespace Soaps.Migrations
 {
     [DbContext(typeof(MvcSoapContext))]
-    partial class MvcSoapContextModelSnapshot : ModelSnapshot
+    [Migration("20201212213150_RequieredProperties")]
+    partial class RequieredProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,9 +26,6 @@ namespace Soaps.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
-
-                    b.Property<bool>("Available")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Description")
                         .IsRequired()

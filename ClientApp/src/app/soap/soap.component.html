@@ -1,37 +1,72 @@
-<h1>{{ soap.name }}</h1>
+<h1>Lista de Jabones</h1>
 
-<div class="ui-rtl" dir="rtl">
-  <p-dialog [(visible)]="display">
-    <p-header>
-      Header content here
-    </p-header>
-    <div>
-      <label>Name: </label>
-      <input [(ngModel)]="soap.name" />
-    </div>
-    
-    <p-footer>
-      <div>
-        <button (click)="sendPostRequest()">Add</button>
-      </div>
-    </p-footer>
-  </p-dialog>
+<div>
+  <p-messages [(value)]="msgs" [hideTransitionOptions]="'500ms'" sticky="sticky"></p-messages>
 </div>
 
-<button type="button" (click)="showDialog()" pButton icon="pi pi-info-circle" label="Show"></button>
+<div>
+  <button pButton type="button" (click)="showDialog()" label="Crear" class="ui-button-rounded"></button>
+</div>
+<br />
+<p-dialog [(visible)]="display" [transitionOptions]="'100ms'" 
+          [maximizable]="true" [responsive]="true">
+  <p-header>
+    Agregar un nuevo jabon
+  </p-header>
+  <br />
+  <div>
+    <form [formGroup]="form" (submit)="sendPostRequest()">
+      <div class="form-group">
+        <label for="name">Nombre: </label>
+        <br />
+        <input id="name" type="text" size="30" pInputText formControlName="name" placeholder="Nombre">
+      </div>
+      <div class="form-group">
+        <label for="description">Descripción: </label>
+        <br />
+        <textarea id="description" rows="5" cols="30" pInputTextarea autoResize="autoResize" formControlName="description" placeholder="Descripción"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="description">Imagenes: </label>
+        <br />
+        <p-fileUpload name="images[]" url="./upload.php" (onUpload)="onUpload($event)"
+                      multiple="multiple" accept="image/*" maxFileSize="1000000">
+          <ng-template pTemplate="content">
+            <ul *ngIf="uploadedFiles.length">
+              <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+            </ul>
+          </ng-template>
+        </p-fileUpload>
+      </div>
+      <div class="form-group">
+        <label for="name">Precio: </label>
+        <br />
+        <p-spinner size="30" [step]=".50" [formatInput]="true" formControlName="price" thosandSeparator="," decimalSeparator="."></p-spinner>
+      </div>
+    </form>
+    
+  </div>
+  <p-footer>
+    <div>
+      <button pButton type="button" (click)="sendPostRequest()" label="Crear" class="ui-button-rounded"></button>
+    </div>
+  </p-footer>
+</p-dialog>
 
-<button (click)="create()">Create</button>
+<div>
+  <p *ngIf="!soaps"><em>Loading...</em></p>
+</div>
 
-<p *ngIf="!soaps"><em>Loading...</em></p>
-
-<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="soaps">
-  <thead>
-    <tr>
-      <th>Name</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let soap of soaps">
-      <td>{{ soap.name }}</td>
-  </tbody>
-</table>
+<div>
+  <table class='table table-striped' aria-labelledby="tableLabel" *ngIf="soaps">
+    <thead>
+      <tr>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let soap of soaps">
+        <td>{{ soap.name }}</td>
+    </tbody>
+  </table>
+</div>

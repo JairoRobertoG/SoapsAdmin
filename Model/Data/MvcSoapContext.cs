@@ -10,5 +10,9 @@ namespace Soaps.Model.Data
         }
 
         public DbSet<Soap> Soaps { get; set; }
+
+        public DbSet<SoapType> SoapTypes { get; set; }
+
+        public DbSet<SoapDetail> SoapDetails { get; set; }
     }
 }
