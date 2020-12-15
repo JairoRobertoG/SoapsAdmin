@@ -8,7 +8,7 @@
   <button pButton type="button" (click)="showDialog()" label="Crear" class="ui-button-rounded"></button>
 </div>
 <br />
-<p-dialog [(visible)]="display" [transitionOptions]="'100ms'" 
+<p-dialog [(visible)]="display" [transitionOptions]="'100ms'" [baseZIndex]="0" [style]="{width: '600px'}"
           [maximizable]="true" [responsive]="true">
   <p-header>
     Agregar un nuevo jabon
@@ -42,6 +42,17 @@
         <label for="name">Precio: </label>
         <br />
         <p-spinner size="30" [step]=".50" [formatInput]="true" formControlName="price" thosandSeparator="," decimalSeparator="."></p-spinner>
+      </div>
+      <div class="form-group">
+        <label for="available">Disponible: </label>
+        <br />
+        <p-checkbox formControlName="price" binary="true"></p-checkbox>
+      </div>
+      <div class="form-group">
+        <label for="soapTypeId">Tipo de Jabon: </label>
+        <br />
+        <!--<p-dropdown [options]="soapTypes" formControlName="soapTypeId" placeholder="Select un tipo de jabon" optionLabel="name" [showClear]="true"></p-dropdown>-->
+        <!--<p>Selected City: {{selectedCity ? selectedCity.name : 'none'}}</p>-->
       </div>
     </form>
     

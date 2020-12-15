@@ -43,6 +43,7 @@ export class SoapComponent implements OnInit {
     this.http = http
 
     http.get<Soap[]>(baseUrl + 'soaps').subscribe(result => {
+      console.log(result);
       this.soaps = result;
     }, error => console.error(error));
   }

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Soaps.Dto;
 using Soaps.Model;
 using Soaps.Model.Data;
 
@@ -15,17 +17,30 @@ namespace Soaps.Controllers
     public class SoapsController : ControllerBase
     {
         private readonly MvcSoapContext _context;
+        private readonly IMapper _mapper;
 
-        public SoapsController(MvcSoapContext context)
+        public SoapsController(MvcSoapContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Soaps
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Soap>>> Get()
         {
-            return await _context.Soaps.ToListAsync();
+            try
+            {
+                var soap = await _context.Soaps.ToListAsync();
+                var dto = _mapper.Map<SoapDto>(soap.FirstOrDefault());
+                
+                return await _context.Soaps.ToListAsync();
+            }
+            catch (Exception e)
+            {
+                var m = e.Message;
+                return await _context.Soaps.ToListAsync();
+            }
         }
 
         // GET: api/Soaps/5
