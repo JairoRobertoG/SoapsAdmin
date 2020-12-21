@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Soaps.Model.Data;
 
 namespace Soaps.Migrations
 {
     [DbContext(typeof(MvcSoapContext))]
-    partial class MvcSoapContextModelSnapshot : ModelSnapshot
+    [Migration("20201220213803_ImagesEntity")]
+    partial class ImagesEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,12 +31,7 @@ namespace Soaps.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SoapId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("SoapId");
 
                     b.ToTable("Images");
                 });
@@ -50,6 +47,10 @@ namespace Soaps.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -106,17 +107,6 @@ namespace Soaps.Migrations
                     b.ToTable("SoapTypes");
                 });
 
-            modelBuilder.Entity("Soaps.Model.Image", b =>
-                {
-                    b.HasOne("Soaps.Model.Soap", "Soap")
-                        .WithMany("Images")
-                        .HasForeignKey("SoapId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Soap");
-                });
-
             modelBuilder.Entity("Soaps.Model.Soap", b =>
                 {
                     b.HasOne("Soaps.Model.SoapType", "SoapType")
@@ -141,8 +131,6 @@ namespace Soaps.Migrations
 
             modelBuilder.Entity("Soaps.Model.Soap", b =>
                 {
-                    b.Navigation("Images");
-
                     b.Navigation("SoapDetails");
                 });
 

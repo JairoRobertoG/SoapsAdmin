@@ -22,6 +22,9 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { SpinnerModule } from 'primeng/spinner';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
+import { TableModule } from 'primeng/table';
+import { CardModule } from 'primeng/card';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @NgModule({
   declarations: [
@@ -49,6 +52,9 @@ import { DropdownModule } from 'primeng/dropdown';
     SpinnerModule,
     CheckboxModule,
     DropdownModule,
+    TableModule,
+    CardModule,
+    ProgressSpinnerModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },

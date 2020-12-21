@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Soaps.Dto;
 using Soaps.Model;
 using Soaps.Model.Data;
 
@@ -23,9 +24,15 @@ namespace Soaps.Controllers
 
         // GET: api/Soaps
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SoapType>>> Get()
+        public async Task<ActionResult<IEnumerable<DropDownListDto>>> Get()
         {
-            return await _context.SoapTypes.ToListAsync();
+            var soapTypes = await _context.SoapTypes.Select(s => new DropDownListDto
+            {
+                Code = s.Id.ToString(),
+                Label = s.Name
+            }).ToListAsync();
+
+            return soapTypes;
         }
 
         // GET: api/Soaps/5

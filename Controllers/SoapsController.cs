@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,34 +21,77 @@ namespace Soaps.Controllers
     {
         private readonly MvcSoapContext _context;
         private readonly IMapper _mapper;
+        private IHostingEnvironment _hostingEnvironment;
 
-        public SoapsController(MvcSoapContext context, IMapper mapper)
+        public SoapsController(MvcSoapContext context, IMapper mapper, IHostingEnvironment hostingEnvironment)
         {
             _context = context;
             _mapper = mapper;
+            _hostingEnvironment = hostingEnvironment;
+        }
+
+        [HttpPost]
+        [Route("upload")]
+        public IActionResult Upload()
+        {
+            try
+            {
+                var files = Request.Form.Files;
+                string folderName = "Upload";
+                string webRootPath = _hostingEnvironment.WebRootPath;
+                string newPath = Path.Combine(webRootPath, folderName);
+                
+                if (!Directory.Exists(newPath))
+                {
+                    Directory.CreateDirectory(newPath);
+                }
+                if (files.Count > 0)
+                {
+                    foreach (var file in files)
+                    {
+                        string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                        string fullPath = Path.Combine(newPath, fileName);
+                        using (var stream = new FileStream(fullPath, FileMode.Create))
+                        {
+                            file.CopyTo(stream);
+                        }
+                    }
+                }
+
+                return Ok();
+            }
+            catch (System.Exception ex)
+            {
+                return Ok();
+            }
         }
 
         // GET: api/Soaps
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Soap>>> Get()
+        public async Task<ActionResult<IEnumerable<SoapDto>>> Get()
         {
             try
             {
-                var soap = await _context.Soaps.ToListAsync();
-                var dto = _mapper.Map<SoapDto>(soap.FirstOrDefault());
-                
-                return await _context.Soaps.ToListAsync();
+                List<SoapDto> soapDtos = new List<SoapDto>();
+                List<Soap> soaps = await _context.Soaps
+                                         .Include(t => t.SoapType)
+                                         .Include(d => d.SoapDetails)
+                                         .Include(t => t.Images)
+                                         .ToListAsync();
+
+                _mapper.Map(soaps, soapDtos);
+
+                return soapDtos;
             }
             catch (Exception e)
             {
-                var m = e.Message;
-                return await _context.Soaps.ToListAsync();
+                return new List<SoapDto>();
             }
         }
 
         // GET: api/Soaps/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Soap>> Get(int id)
+        public async Task<ActionResult<SoapDto>> Get(int id)
         {
             var soap = await _context.Soaps.FindAsync(id);
 
@@ -54,7 +100,10 @@ namespace Soaps.Controllers
                 return NotFound();
             }
 
-            return soap;
+            SoapDto soapDto = new SoapDto();
+            _mapper.Map(soap, soapDto);
+
+            return soapDto;
         }
 
         // PUT: api/Soaps/5
@@ -95,20 +144,24 @@ namespace Soaps.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Soap>> Post([FromBody]Soap soap)
+        public async Task<ActionResult<SoapDto>> Post([FromBody]SoapDto soapDto)
         {
             try
             {
+                Soap soap = new Soap();
+                _mapper.Map(soapDto, soap);
+                soap.SoapType = await _context.SoapTypes.FindAsync(int.Parse(soapDto.SoapTypeId));
                 _context.Soaps.Add(soap);
                 await _context.SaveChangesAsync();
+                _mapper.Map(soap, soapDto);
 
-                return CreatedAtAction("Get", new { id = soap.Id }, soap);
+                return CreatedAtAction("Get", new { id = soapDto.Id }, soapDto);
             }
             catch (ArgumentException)
             {
                 return this.ValidationProblem();
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return this.StatusCode(500, "Internal Server error");
             }

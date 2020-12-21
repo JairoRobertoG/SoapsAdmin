@@ -6,6 +6,7 @@ interface Soap {
   price: number;
   available: boolean;
   soapType: SoapType;
-  soapTypeId: number;
-  soapDetail: SoapDetail[];
+  soapTypeId: string;
+  soapDetails: SoapDetail[];
+  images: Image[];
 }

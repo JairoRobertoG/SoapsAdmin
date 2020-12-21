@@ -1,7 +1,6 @@
 ﻿
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Soaps.Model
 {
@@ -16,9 +15,6 @@ namespace Soaps.Model
         public string Description { get; set; }
 
         [Required]
-        public string Image { get; set; }
-
-        [Required]
         public double Price { get; set; }
 
         [Required]
@@ -29,5 +25,8 @@ namespace Soaps.Model
 
         [Required]
         public ICollection<SoapDetail> SoapDetails { get; set; }
+
+        [Required]
+        public ICollection<Image> Images { get; set; }
     }
 }

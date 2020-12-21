@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Soaps.Model.Data;
 
 namespace Soaps.Migrations
 {
     [DbContext(typeof(MvcSoapContext))]
-    partial class MvcSoapContextModelSnapshot : ModelSnapshot
+    [Migration("20201220214341_ImagesEntityRelationshipOneToManyWithSoap")]
+    partial class ImagesEntityRelationshipOneToManyWithSoap
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,6 +52,10 @@ namespace Soaps.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

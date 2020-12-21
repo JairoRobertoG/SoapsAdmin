@@ -28,22 +28,27 @@ import { Message } from 'primeng/components/common/api';
   providers: [MessageService]
 })
 export class SoapComponent implements OnInit {
-  public soaps: Soap[]
-  public soapTypes: SoapType[]
+  public soaps: Soap[];
+  public soapTypes: DropDownList[];
   @Input() soap: Soap;
   display: boolean = false;
   baseUrl: string;
   http: HttpClient;
   form: FormGroup;
   msgs: Message[] = [];
-  uploadedFiles: any[] = [];
+  uploadedFiles: Image[] = [];
+  soapType: string;
+  dropDown: DropDownList;
+  cols: any[];
+  soapDetails: SoapDetail[] = [];
+  soapDetailName: string;
+  imageDialog: boolean = false;
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string, private fb: FormBuilder, private messageService: MessageService) {
     this.baseUrl = baseUrl;
     this.http = http
 
     http.get<Soap[]>(baseUrl + 'soaps').subscribe(result => {
-      console.log(result);
       this.soaps = result;
     }, error => console.error(error));
   }
@@ -52,19 +57,31 @@ export class SoapComponent implements OnInit {
     this.form = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
-      price: ['', Validators.required]
+      price: [0.0, Validators.required],
+      available: [false],
+      soapTypeId: [0, Validators.required],
+      soapDetails: [0, Validators.required],
+      images: [0, Validators.required]
     });
   }
 
   onUpload(event) {
     for (let file of event.files) {
-      this.uploadedFiles.push(file);
+      console.log(file);
+      this.uploadedFiles.push({
+        id: 0,
+        name: file.name
+      });
     }
 
     this.messageService.add({ severity: 'info', summary: 'File Uploaded', detail: '' });
   }
 
   sendPostRequest() {
+    this.form.controls['soapTypeId'].setValue(this.dropDown.code);
+    this.form.controls['soapDetails'].setValue(this.soapDetails);
+    this.form.controls['images'].setValue(this.uploadedFiles);
+
     if (this.form.valid) {
       const soap = this.form.getRawValue();
       return this.http.post<Soap>(this.baseUrl + 'soaps', soap).subscribe(result => {
@@ -76,17 +93,43 @@ export class SoapComponent implements OnInit {
     }
   }
 
+  addIngredient() {
+    if (this.soapDetailName === '' || this.soapDetailName === undefined) {
+      this.showError('Se debe de escribir un ingrediente');
+    } else {
+      this.soapDetails.push({
+        id: 0,
+        name: this.soapDetailName
+      });
+
+      this.soapDetailName = '';
+    }
+  }
+
+  removeIngredient(ingredient: SoapDetail) {
+    const index = this.soapDetails.findIndex(ingredient => ingredient.name === ingredient.name);
+    this.soapDetails.splice(index, 1); 
+  }
+
   showSuccess() {
     this.msgs = [];
     this.msgs.push({ severity: 'success', summary: 'Success Message', detail: 'Order submitted' });
   }
 
+  showError(msg: string) {
+    this.msgs = [];
+    this.msgs.push({ severity: 'error', summary: msg, detail: 'Order submitted' });
+  }
+
   showDialog() {
-    this.http.get<SoapType[]>(this.baseUrl + 'soaptypes').subscribe(result => {
+    this.http.get<DropDownList[]>(this.baseUrl + 'soaptypes').subscribe(result => {
       this.soapTypes = result;
-      console.log(this.soapTypes);
       this.display = true;
     }, error => console.error(error));
+  }
+
+  addImage(soap: Soap) {
+    this.imageDialog = true;
   }
 
   closeDialog() {

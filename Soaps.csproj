@@ -37,15 +37,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\soap\model\dropdownlist.ts" />
+    <None Remove="ClientApp\src\app\soap\model\image.ts" />
     <None Remove="ClientApp\src\app\soap\model\soap.ts" />
     <None Remove="ClientApp\src\app\soap\model\soapdetail.ts" />
     <None Remove="ClientApp\src\app\soap\model\soaptype.ts" />
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\soap\model\dropdownlist.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\soap\model\image.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\soap\model\soap.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\soap\model\soapdetail.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\soap\model\soaptype.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Images\" />
+    <Folder Include="wwwroot\Upload\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

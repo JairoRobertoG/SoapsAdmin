@@ -14,5 +14,7 @@ namespace Soaps.Model.Data
         public DbSet<SoapType> SoapTypes { get; set; }
 
         public DbSet<SoapDetail> SoapDetails { get; set; }
+
+        public DbSet<Image> Images { get; set; }
     }
 }

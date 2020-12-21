@@ -1,4 +1,6 @@
-﻿namespace Soaps.Dto
+﻿using System.Collections.Generic;
+
+namespace Soaps.Dto
 {
     public class SoapDto : BaseDto
     {
@@ -6,8 +8,16 @@
 
         public string Description { get; set; }
 
-        public string Image { get; set; }
-
         public double Price { get; set; }
+
+        public bool Available { get; set; }
+
+        public SoapTypeDto SoapType { get; set; }
+
+        public string SoapTypeId { get; set; }
+
+        public List<SoapDetailDto> SoapDetails { get; set; }
+
+        public List<ImageDto> Images { get; set;  }
     }
 }

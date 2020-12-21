@@ -8,13 +8,16 @@
   <button pButton type="button" (click)="showDialog()" label="Crear" class="ui-button-rounded"></button>
 </div>
 <br />
-<p-dialog [(visible)]="display" [transitionOptions]="'100ms'" [baseZIndex]="0" [style]="{width: '600px'}"
+<p-dialog [(visible)]="display" [transitionOptions]="'100ms'" [baseZIndex]="10000" [style]="{width: '800px'}"
           [maximizable]="true" [responsive]="true">
   <p-header>
     Agregar un nuevo jabon
   </p-header>
   <br />
   <div>
+    <div>
+      <p-messages [(value)]="msgs" [hideTransitionOptions]="'500ms'" sticky="sticky"></p-messages>
+    </div>
     <form [formGroup]="form" (submit)="sendPostRequest()">
       <div class="form-group">
         <label for="name">Nombre: </label>
@@ -27,18 +30,6 @@
         <textarea id="description" rows="5" cols="30" pInputTextarea autoResize="autoResize" formControlName="description" placeholder="Descripción"></textarea>
       </div>
       <div class="form-group">
-        <label for="description">Imagenes: </label>
-        <br />
-        <p-fileUpload name="images[]" url="./upload.php" (onUpload)="onUpload($event)"
-                      multiple="multiple" accept="image/*" maxFileSize="1000000">
-          <ng-template pTemplate="content">
-            <ul *ngIf="uploadedFiles.length">
-              <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
-            </ul>
-          </ng-template>
-        </p-fileUpload>
-      </div>
-      <div class="form-group">
         <label for="name">Precio: </label>
         <br />
         <p-spinner size="30" [step]=".50" [formatInput]="true" formControlName="price" thosandSeparator="," decimalSeparator="."></p-spinner>
@@ -46,16 +37,55 @@
       <div class="form-group">
         <label for="available">Disponible: </label>
         <br />
-        <p-checkbox formControlName="price" binary="true"></p-checkbox>
-      </div>
-      <div class="form-group">
-        <label for="soapTypeId">Tipo de Jabon: </label>
-        <br />
-        <!--<p-dropdown [options]="soapTypes" formControlName="soapTypeId" placeholder="Select un tipo de jabon" optionLabel="name" [showClear]="true"></p-dropdown>-->
-        <!--<p>Selected City: {{selectedCity ? selectedCity.name : 'none'}}</p>-->
+        <p-checkbox formControlName="available" binary="true"></p-checkbox>
       </div>
     </form>
-    
+    <div class="form-group">
+      <label for="images">Imagenes: </label>
+      <br />
+      <p-fileUpload url="./Soaps/Upload"
+                    (onUpload)="onUpload($event)"
+                    accept="image/*"
+                    multiple="multiple"
+                    maxFileSize="1000000">
+        <ng-template pTemplate="content">
+          <ul *ngIf="uploadedFiles.length">
+            <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+          </ul>
+        </ng-template>
+      </p-fileUpload>
+    </div>
+    <div class="form-group">
+      <label for="description">Ingrediente: </label>
+      <br />
+      <div class="ui-g-12 ui-md-4">
+        <div class="ui-inputgroup">
+          <input type="text" pInputText placeholder="Ingrediente" [(ngModel)]="soapDetailName">
+          <button pButton type="button" icon="pi pi-plus" class="ui-button-warn" (click)="addIngredient()"></button>
+        </div>
+      </div>
+      <table class='table table-striped' aria-labelledby="tableLabel" *ngIf="soapDetails">
+        <thead>
+          <tr>
+            <th>Ingrediente</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let soapDetail of soapDetails">
+            <td>{{ soapDetail.name }}</td>
+            <td>
+              <button pButton type="button" icon="pi pi-times" class="ui-button-warn" (click)="removeIngredient(soapDetail)"></button>
+            </td>
+        </tbody>
+      </table>
+    </div>
+    <div class="form-group">
+      <label for="soapTypeId">Tipo de Jabon: </label>
+      <br />
+      <p-dropdown [options]="soapTypes" [(ngModel)]="dropDown" optionLabel="label" placeholder="Select un tipo de jabon" [showClear]="true"></p-dropdown>
+      <!--<p>Selected City: {{dropDown ? dropDown.code : 'none'}}</p>-->
+    </div>
   </div>
   <p-footer>
     <div>
@@ -72,12 +102,43 @@
   <table class='table table-striped' aria-labelledby="tableLabel" *ngIf="soaps">
     <thead>
       <tr>
-        <th>Name</th>
+        <th>Nombre</th>
+        <!--<th>Imagen</th>-->
+        <th>Precio</th>
+        <th>Tipo</th>
+        <th>Opciones</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let soap of soaps">
         <td>{{ soap.name }}</td>
-    </tbody>
+        <!--<td>
+          <img src="../Upload/Imagen2.png" height="50" width="100" >
+        </td>-->
+        <td>{{ soap.price | currency }}</td>
+        <td>{{ soap.soapType.name }}</td>
+        <td>
+          <button pButton type="button" icon="pi pi-images" class="ui-button-warn" (click)="addImage(soap)"></button>
+          <button pButton type="button" icon="pi pi-pencil" class="ui-button-warn" (click)="edit(soap)"></button>
+        </td>
+</tbody>
   </table>
 </div>
+
+<p-dialog header="Agregar Imagenes" [(visible)]="imageDialog" [modal]="true" [responsive]="true" [style]="{width: '800px'}" [minY]="70"
+          [maximizable]="true" [baseZIndex]="10000">
+  <div class="form-group">
+      <label for="description">Imagenes: </label>
+      <br />
+      <p-fileUpload name="images[]" (uploadHandler)="myUploader($event)" 
+                    multiple="multiple" accept="image/*" maxFileSize="1000000">
+        <ng-template pTemplate="content">
+          <ul *ngIf="uploadedFiles.length">
+            <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+          </ul>
+        </ng-template>
+      </p-fileUpload>
+    </div>
+  <p-footer>
+  </p-footer>
+</p-dialog>
