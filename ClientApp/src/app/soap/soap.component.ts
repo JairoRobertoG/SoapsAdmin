@@ -43,6 +43,7 @@ export class SoapComponent implements OnInit {
   soapDetails: SoapDetail[] = [];
   soapDetailName: string;
   imageDialog: boolean = false;
+  edit: boolean = false;
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string, private fb: FormBuilder, private messageService: MessageService) {
     this.baseUrl = baseUrl;
@@ -55,6 +56,7 @@ export class SoapComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
+      id: [0],
       name: ['', Validators.required],
       description: ['', Validators.required],
       price: [0.0, Validators.required],
@@ -67,7 +69,6 @@ export class SoapComponent implements OnInit {
 
   onUpload(event) {
     for (let file of event.files) {
-      console.log(file);
       this.uploadedFiles.push({
         id: 0,
         name: file.name
@@ -78,6 +79,7 @@ export class SoapComponent implements OnInit {
   }
 
   sendPostRequest() {
+    this.form.controls['id'].setValue(0);
     this.form.controls['soapTypeId'].setValue(this.dropDown.code);
     this.form.controls['soapDetails'].setValue(this.soapDetails);
     this.form.controls['images'].setValue(this.uploadedFiles);
@@ -91,6 +93,17 @@ export class SoapComponent implements OnInit {
         this.showSuccess();
       }, error => console.error(error));
     }
+  }
+
+  sendPutRequest() {
+    this.form.controls['soapTypeId'].setValue(this.dropDown.code);
+    this.form.controls['soapDetails'].setValue(this.soapDetails);
+    this.form.controls['images'].setValue(this.uploadedFiles);
+    const soap = this.form.getRawValue();
+
+    return this.http.put<Soap>(this.baseUrl + 'soaps/' + soap.id, soap).subscribe(result => {
+      //Code
+    }, error => console.error(error));
   }
 
   addIngredient() {
@@ -125,6 +138,23 @@ export class SoapComponent implements OnInit {
     this.http.get<DropDownList[]>(this.baseUrl + 'soaptypes').subscribe(result => {
       this.soapTypes = result;
       this.display = true;
+    }, error => console.error(error));
+  }
+
+  showEditDialog(soap: Soap) {
+    this.http.get<DropDownList[]>(this.baseUrl + 'soaptypes').subscribe(result => {
+      this.soapTypes = result;
+      this.soapDetails = soap.soapDetails;
+
+      this.form.patchValue({
+        id: soap.id,
+        name: soap.name,
+        description: soap.description,
+        price: soap.price,
+        available: soap.available
+      });
+
+      this.edit = true;
     }, error => console.error(error));
   }
 

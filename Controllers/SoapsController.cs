@@ -93,7 +93,11 @@ namespace Soaps.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SoapDto>> Get(int id)
         {
-            var soap = await _context.Soaps.FindAsync(id);
+            var soap = await _context.Soaps
+                                     .Include(t => t.SoapType)
+                                     .Include(d => d.SoapDetails)
+                                     .Include(t => t.Images)
+                                     .FirstOrDefaultAsync(e => e.Id == id);
 
             if (soap == null)
             {
@@ -110,11 +114,29 @@ namespace Soaps.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSoap(int id, Soap soap)
+        public async Task<IActionResult> Put(int id, SoapDto soapDto)
         {
-            if (id != soap.Id)
+            if (id != soapDto.Id)
             {
                 return BadRequest();
+            }
+
+            Soap soap = await _context.Soaps
+                                      .Include(t => t.SoapType)
+                                      .Include(d => d.SoapDetails)
+                                      .Include(t => t.Images)
+                                      .FirstOrDefaultAsync(e => e.Id == id);
+            
+            soap.SoapDetails.Clear();
+            soap.Name = soapDto.Name;
+            soap.Description = soapDto.Description;
+            foreach (var soapDetail in soapDto.SoapDetails)
+            {
+                soap.SoapDetails.Add(new SoapDetail
+                {
+                    Id = soapDetail.Id,
+                    Name = soapDetail.Name
+                });
             }
 
             _context.Entry(soap).State = EntityState.Modified;
@@ -122,6 +144,7 @@ namespace Soaps.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                return CreatedAtAction("Get", null);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -134,8 +157,6 @@ namespace Soaps.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
         }
 
         // POST: api/Soaps

@@ -8,8 +8,8 @@
   <button pButton type="button" (click)="showDialog()" label="Crear" class="ui-button-rounded"></button>
 </div>
 <br />
-<p-dialog [(visible)]="display" [transitionOptions]="'100ms'" [baseZIndex]="10000" [style]="{width: '800px'}"
-          [maximizable]="true" [responsive]="true">
+<p-dialog [(visible)]="display" [transitionOptions]="'100ms'" [baseZIndex]="10000"
+          [style]="{width: '800px'}" [maximizable]="true" [responsive]="true">
   <p-header>
     Agregar un nuevo jabon
   </p-header>
@@ -19,6 +19,7 @@
       <p-messages [(value)]="msgs" [hideTransitionOptions]="'500ms'" sticky="sticky"></p-messages>
     </div>
     <form [formGroup]="form" (submit)="sendPostRequest()">
+      <input id="id" type="hidden" formControlName="id" />
       <div class="form-group">
         <label for="name">Nombre: </label>
         <br />
@@ -103,7 +104,6 @@
     <thead>
       <tr>
         <th>Nombre</th>
-        <!--<th>Imagen</th>-->
         <th>Precio</th>
         <th>Tipo</th>
         <th>Opciones</th>
@@ -112,14 +112,11 @@
     <tbody>
       <tr *ngFor="let soap of soaps">
         <td>{{ soap.name }}</td>
-        <!--<td>
-          <img src="../Upload/Imagen2.png" height="50" width="100" >
-        </td>-->
         <td>{{ soap.price | currency }}</td>
         <td>{{ soap.soapType.name }}</td>
         <td>
           <button pButton type="button" icon="pi pi-images" class="ui-button-warn" (click)="addImage(soap)"></button>
-          <button pButton type="button" icon="pi pi-pencil" class="ui-button-warn" (click)="edit(soap)"></button>
+          <button pButton type="button" icon="pi pi-pencil" class="ui-button-warn" (click)="showEditDialog(soap)"></button>
         </td>
 </tbody>
   </table>
@@ -128,17 +125,80 @@
 <p-dialog header="Agregar Imagenes" [(visible)]="imageDialog" [modal]="true" [responsive]="true" [style]="{width: '800px'}" [minY]="70"
           [maximizable]="true" [baseZIndex]="10000">
   <div class="form-group">
-      <label for="description">Imagenes: </label>
-      <br />
-      <p-fileUpload name="images[]" (uploadHandler)="myUploader($event)" 
-                    multiple="multiple" accept="image/*" maxFileSize="1000000">
-        <ng-template pTemplate="content">
-          <ul *ngIf="uploadedFiles.length">
-            <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
-          </ul>
-        </ng-template>
-      </p-fileUpload>
-    </div>
+    <label for="description">Imagenes: </label>
+    <br />
+    <p-fileUpload name="images[]" (uploadHandler)="myUploader($event)"
+                  multiple="multiple" accept="image/*" maxFileSize="1000000">
+      <ng-template pTemplate="content">
+        <ul *ngIf="uploadedFiles.length">
+          <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+        </ul>
+      </ng-template>
+    </p-fileUpload>
+  </div>
   <p-footer>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Agregar Imagenes" [(visible)]="edit" [modal]="true" [responsive]="true" [style]="{width: '800px'}" [minY]="70"
+          [maximizable]="true" [baseZIndex]="10000">
+  <form [formGroup]="form" (submit)="sendPutRequest()">
+    <input id="id" type="hidden" formControlName="id" />
+    <div class="form-group">
+      <label for="name">Nombre: </label>
+      <br />
+      <input id="name" type="text" size="30" pInputText formControlName="name" placeholder="Nombre">
+    </div>
+    <div class="form-group">
+      <label for="description">Descripción: </label>
+      <br />
+      <textarea id="description" rows="5" cols="30" pInputTextarea autoResize="autoResize" formControlName="description" placeholder="Descripción"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="name">Precio: </label>
+      <br />
+      <p-spinner size="30" [step]=".50" [formatInput]="true" formControlName="price" thosandSeparator="," decimalSeparator="."></p-spinner>
+    </div>
+    <div class="form-group">
+      <label for="available">Disponible: </label>
+      <br />
+      <p-checkbox formControlName="available" binary="true"></p-checkbox>
+    </div>
+  </form>
+  <div class="form-group">
+    <label for="soapTypeId">Tipo de Jabon: </label>
+    <br />
+    <p-dropdown [options]="soapTypes" [(ngModel)]="dropDown" optionLabel="label" placeholder="Select un tipo de jabon" [showClear]="true"></p-dropdown>
+    <!--<p>Selected City: {{dropDown ? dropDown.code : 'none'}}</p>-->
+  </div>
+  <div>
+    <label for="description">Ingrediente: </label>
+    <br />
+    <div class="ui-g-12 ui-md-4">
+      <div class="ui-inputgroup">
+        <input type="text" pInputText placeholder="Ingrediente" [(ngModel)]="soapDetailName">
+        <button pButton type="button" icon="pi pi-plus" class="ui-button-warn" (click)="addIngredient()"></button>
+      </div>
+    </div>
+    <table class='table table-striped' aria-labelledby="tableLabel" *ngIf="soapDetails">
+      <thead>
+        <tr>
+          <th>Ingrediente</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let soapDetail of soapDetails">
+          <td>{{ soapDetail.name }}</td>
+          <td>
+            <button pButton type="button" icon="pi pi-times" class="ui-button-warn" (click)="removeIngredient(soapDetail)"></button>
+          </td>
+      </tbody>
+    </table>
+  </div>
+  <p-footer>
+    <div>
+      <button pButton type="button" (click)="sendPutRequest()" label="Editar" class="ui-button-rounded"></button>
+    </div>
   </p-footer>
 </p-dialog>

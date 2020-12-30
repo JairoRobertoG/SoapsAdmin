@@ -30,7 +30,11 @@ namespace Soaps.Dto
             {
                 Id = s.Id,
                 Name = s.Name
-            })));
+            }))).ForMember(d => d.SoapType, e => e.MapFrom(m => new SoapType
+            {
+                Id = m.SoapType.Id,
+                Name = m.SoapType.Name
+            }));
         }
     }
 }
