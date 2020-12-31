@@ -15,7 +15,9 @@
           <b style="color: green">{{ soap.price | currency }}</b>
         </div>
         <p-footer>
-          
+          <b style="color: green" *ngIf="soap.available">Disponible</b>
+          <b style="color: red" *ngIf="!soap.available">No Disponible</b>
+          <button (click)="goToSoap(soap)" [disabled]="!soap.available" style="margin-left: 10%" pButton type="button" label="Comprar" class="ui-button-rounded ui-button-success"></button>
         </p-footer>
       </p-card>
     </div>

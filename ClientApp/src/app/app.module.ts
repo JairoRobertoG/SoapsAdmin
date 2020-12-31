@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
@@ -25,6 +24,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { BuyComponent } from './buy/buy.component';
+import { GalleriaModule } from 'primeng/galleria';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
-    SoapComponent
+    SoapComponent,
+    BuyComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -55,11 +57,13 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     TableModule,
     CardModule,
     ProgressSpinnerModule,
+    GalleriaModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'soap', component: SoapComponent },
+      { path: 'buy', component: BuyComponent },
     ])
   ],
   providers: [],

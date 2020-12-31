@@ -21,8 +21,10 @@ namespace Soaps.Controllers
     {
         private readonly MvcSoapContext _context;
         private readonly IMapper _mapper;
-        private IHostingEnvironment _hostingEnvironment;
+        [Obsolete]
+        private readonly IHostingEnvironment _hostingEnvironment;
 
+        [Obsolete]
         public SoapsController(MvcSoapContext context, IMapper mapper, IHostingEnvironment hostingEnvironment)
         {
             _context = context;
@@ -32,6 +34,7 @@ namespace Soaps.Controllers
 
         [HttpPost]
         [Route("upload")]
+        [Obsolete]
         public IActionResult Upload()
         {
             try
@@ -60,7 +63,7 @@ namespace Soaps.Controllers
 
                 return Ok();
             }
-            catch (System.Exception ex)
+            catch
             {
                 return Ok();
             }
@@ -114,7 +117,7 @@ namespace Soaps.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, SoapDto soapDto)
+        public async Task<ActionResult<IEnumerable<SoapDto>>> Put(int id, SoapDto soapDto)
         {
             if (id != soapDto.Id)
             {
@@ -130,6 +133,9 @@ namespace Soaps.Controllers
             soap.SoapDetails.Clear();
             soap.Name = soapDto.Name;
             soap.Description = soapDto.Description;
+            soap.Available = soapDto.Available;
+            soap.Price = soapDto.Price;
+            soap.SoapType = await _context.SoapTypes.FindAsync(int.Parse(soapDto.SoapTypeId));
             foreach (var soapDetail in soapDto.SoapDetails)
             {
                 soap.SoapDetails.Add(new SoapDetail
@@ -139,12 +145,35 @@ namespace Soaps.Controllers
                 });
             }
 
+            if (soapDto.Images.Any())
+            {
+                soap.Images.Clear();
+                foreach (var image in soapDto.Images)
+                {
+                    soap.Images.Add(new Image
+                    {
+                        Id = image.Id,
+                        Name = image.Name
+                    });
+                }
+            }
+
             _context.Entry(soap).State = EntityState.Modified;
 
             try
             {
                 await _context.SaveChangesAsync();
-                return CreatedAtAction("Get", null);
+
+                List<SoapDto> soapDtos = new List<SoapDto>();
+                List<Soap> soaps = await _context.Soaps
+                                         .Include(t => t.SoapType)
+                                         .Include(d => d.SoapDetails)
+                                         .Include(t => t.Images)
+                                         .ToListAsync();
+
+                _mapper.Map(soaps, soapDtos);
+
+                return soapDtos;
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -182,7 +211,7 @@ namespace Soaps.Controllers
             {
                 return this.ValidationProblem();
             }
-            catch (Exception e)
+            catch
             {
                 return this.StatusCode(500, "Internal Server error");
             }

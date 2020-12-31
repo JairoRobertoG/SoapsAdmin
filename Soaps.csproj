@@ -37,6 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\buy\buy.component.ts" />
     <None Remove="ClientApp\src\app\soap\model\dropdownlist.ts" />
     <None Remove="ClientApp\src\app\soap\model\image.ts" />
     <None Remove="ClientApp\src\app\soap\model\soap.ts" />
@@ -45,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\buy\buy.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\soap\model\dropdownlist.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\soap\model\image.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\soap\model\soap.ts" />

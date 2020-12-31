@@ -101,8 +101,10 @@ export class SoapComponent implements OnInit {
     this.form.controls['images'].setValue(this.uploadedFiles);
     const soap = this.form.getRawValue();
 
-    return this.http.put<Soap>(this.baseUrl + 'soaps/' + soap.id, soap).subscribe(result => {
-      //Code
+    return this.http.put<Soap[]>(this.baseUrl + 'soaps/' + soap.id, soap).subscribe(result => {
+      this.soaps = result;
+      this.uploadedFiles = [];
+      this.edit = false;
     }, error => console.error(error));
   }
 
@@ -154,6 +156,7 @@ export class SoapComponent implements OnInit {
         available: soap.available
       });
 
+      this.dropDown = result.find(e => e.code === soap.soapType.id.toString())
       this.edit = true;
     }, error => console.error(error));
   }
