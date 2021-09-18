@@ -26,6 +26,8 @@ import { CardModule } from 'primeng/card';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { BuyComponent } from './buy/buy.component';
 import { GalleriaModule } from 'primeng/galleria';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 
 @NgModule({
   declarations: [
@@ -58,6 +60,7 @@ import { GalleriaModule } from 'primeng/galleria';
     CardModule,
     ProgressSpinnerModule,
     GalleriaModule,
+    ConfirmDialogModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
@@ -66,7 +69,7 @@ import { GalleriaModule } from 'primeng/galleria';
       { path: 'buy', component: BuyComponent },
     ])
   ],
-  providers: [],
+  providers: [ConfirmationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

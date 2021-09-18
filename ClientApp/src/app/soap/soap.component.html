@@ -5,7 +5,16 @@
 </div>
 
 <div>
-  <button pButton type="button" (click)="showDialog()" label="Crear" class="ui-button-rounded"></button>
+  <p-confirmDialog #cd header="Confirmación" icon="pi pi-exclamation-triangle" [transitionOptions]="'400ms'">
+    <p-footer>
+      <button type="button" pButton icon="pi pi-check" class="ui-button-danger" label="Borrar" (click)="cd.accept()"></button>
+      <button type="button" pButton icon="pi pi-times" label="No" (click)="cd.reject()"></button>
+    </p-footer>
+  </p-confirmDialog>
+</div>
+
+<div>
+  <button pButton type="button" (click)="showDialog()" label="Agregar" class="ui-button-rounded"></button>
 </div>
 <br />
 <p-dialog [(visible)]="display" [transitionOptions]="'100ms'" [baseZIndex]="10000"
@@ -118,7 +127,8 @@
         <td *ngIf="soap.available">Si</td>
         <td *ngIf="!soap.available">No</td>
         <td>
-          <button pButton type="button" icon="pi pi-pencil" class="ui-button-warn" (click)="showEditDialog(soap)"></button>
+          <button pButton type="button" icon="pi pi-pencil" class="ui-button-warn" title="Editar" (click)="showEditDialog(soap)"></button>
+          <button pButton type="button" icon="pi pi-times" class="ui-button-danger" title="Eliminar" (click)="removeSoap(soap.id)"></button>
         </td>
 </tbody>
   </table>

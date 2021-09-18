@@ -219,7 +219,7 @@ namespace Soaps.Controllers
 
         // DELETE: api/Soaps/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Soap>> DeleteSoap(int id)
+        public async Task<ActionResult<SoapDto>> DeleteSoap(int id)
         {
             var soap = await _context.Soaps.FindAsync(id);
             if (soap == null)
@@ -230,7 +230,10 @@ namespace Soaps.Controllers
             _context.Soaps.Remove(soap);
             await _context.SaveChangesAsync();
 
-            return soap;
+            SoapDto soapDto = new SoapDto();
+            _mapper.Map(soap, soapDto);
+
+            return soapDto;
         }
 
         private bool SoapExists(int id)

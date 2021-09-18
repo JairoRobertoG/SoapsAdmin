@@ -1,12 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Soaps.Model.Data
 {
-    public class MvcSoapContext : DbContext
+    public class MvcSoapContext : IdentityDbContext
     {
-        public MvcSoapContext(DbContextOptions<MvcSoapContext> options)
-            : base(options)
+        private readonly DbContextOptions _options;
+
+        public MvcSoapContext(DbContextOptions<MvcSoapContext> options) : base(options)
         {
+            _options = options;
         }
 
         public DbSet<Soap> Soaps { get; set; }
@@ -16,5 +19,17 @@ namespace Soaps.Model.Data
         public DbSet<SoapDetail> SoapDetails { get; set; }
 
         public DbSet<Image> Images { get; set; }
+
+        public DbSet<UserRegister> UserRegisters { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserRegister>()
+                        .HasOne<ApplicationUser>(ad => ad.ApplicationUser)
+                        .WithOne(s => s.UserRegister)
+                        .HasForeignKey<UserRegister>(ad => ad.UserRegisterOfApplicationUser);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

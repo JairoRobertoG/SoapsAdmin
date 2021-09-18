@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { MessageService } from 'primeng/components/common/messageservice';
+import { ConfirmationService } from 'primeng/api';
 import { Message } from 'primeng/components/common/api';
 
 
@@ -45,7 +46,9 @@ export class SoapComponent implements OnInit {
   imageDialog: boolean = false;
   edit: boolean = false;
 
-  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string, private fb: FormBuilder, private messageService: MessageService) {
+  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string,
+              private fb: FormBuilder, private messageService: MessageService,
+              private confirmationService: ConfirmationService) {
     this.baseUrl = baseUrl;
     this.http = http
 
@@ -105,6 +108,7 @@ export class SoapComponent implements OnInit {
       this.soaps = result;
       this.uploadedFiles = [];
       this.edit = false;
+      //this.soaps.re
     }, error => console.error(error));
   }
 
@@ -126,6 +130,11 @@ export class SoapComponent implements OnInit {
     this.soapDetails.splice(index, 1); 
   }
 
+  showRemoveSuccess(soapName: string) {
+    this.msgs = [];
+    this.msgs.push({ severity: 'info', summary: 'El Jabón: ' + soapName + ' ha sido eliminado con exito', detail: 'Jabón eliminado' });
+  }
+
   showSuccess() {
     this.msgs = [];
     this.msgs.push({ severity: 'success', summary: 'Success Message', detail: 'Order submitted' });
@@ -141,6 +150,18 @@ export class SoapComponent implements OnInit {
       this.soapTypes = result;
       this.display = true;
     }, error => console.error(error));
+  }
+
+  removeSoap(soapId: number) {
+    this.confirmationService.confirm({
+      message: 'Estas seguro de borrar este jabon?',
+      header: 'Confirmation',
+      accept: () => {
+        return this.http.delete<Soap>(this.baseUrl + 'soaps/' + soapId).subscribe(result => {
+          this.showRemoveSuccess(result);
+        }, error => console.error(error));
+      }
+    });
   }
 
   showEditDialog(soap: Soap) {
