@@ -17,9 +17,30 @@
         <p-footer>
           <b style="color: green" *ngIf="soap.available">Disponible</b>
           <b style="color: red" *ngIf="!soap.available">No Disponible</b>
-          <button (click)="goToSoap(soap)" [disabled]="!soap.available" style="margin-left: 10%" pButton type="button" label="Comprar" class="ui-button-rounded ui-button-success"></button>
+          <button pButton type="button" style="margin-left: 5%" icon="pi pi-search" (click)="selectSoap($event, soap)"></button>
+          <button (click)="goToSoap(soap)" [disabled]="!soap.available" style="margin-left: 5%" pButton type="button" label="Comprar" class="ui-button-rounded ui-button-success"></button>
         </p-footer>
       </p-card>
     </div>
+
+    <p-dialog header="Soap Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true" [style]="{width: '80%'}" (onAfterHide)="onDialogHide()">
+      <div class="ui-g" *ngIf="selectedSoap">
+        <div class="ui-g-12" style="text-align:center">
+          <p-galleria [images]="images" panelWidth="500" panelHeight="313" [showCaption]="true"></p-galleria>
+          <!--<img src="{{ imageBase }}{{ selectedSoap.images[0].name }}" height="350" width="300">-->
+        </div>
+        <div class="ui-g-4">Nombre: </div>
+        <div class="ui-g-8">{{ selectedSoap.name }}</div>
+
+        <div class="ui-g-4">Precio: </div>
+        <div class="ui-g-8">{{ selectedSoap.price | currency }}</div>
+
+        <div class="ui-g-4">Descripción: </div>
+        <div class="ui-g-8">{{ selectedSoap.description }}</div>
+
+        <!--<div class="ui-g-4">Color: </div>
+        <div class="ui-g-8">{{selectedCar.color}}</div>-->
+      </div>
+    </p-dialog>
   </div>
 </div>

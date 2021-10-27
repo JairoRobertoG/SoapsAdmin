@@ -26,13 +26,38 @@ namespace Soaps.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DropDownListDto>>> Get()
         {
-            var soapTypes = await _context.SoapTypes.Select(s => new DropDownListDto
+            try
             {
-                Code = s.Id.ToString(),
-                Label = s.Name
-            }).ToListAsync();
+                List<DropDownListDto> soapTypes = new List<DropDownListDto>();
+                if (!_context.SoapTypes.Any())
+                {
+                    using (var transaction = _context.Database.BeginTransaction())
+                    {
+                        _context.SoapTypes.Add(new SoapType
+                        {
+                            Id = 1,
+                            Name = "Body"
+                        });
 
-            return soapTypes;
+                        _context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.SoapTypes ON;");
+                        _context.SaveChanges();
+                        _context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.SoapTypes OFF;");
+                        transaction.Commit();
+                    }
+                }
+
+                soapTypes = await _context.SoapTypes.Select(s => new DropDownListDto
+                {
+                    Code = s.Id.ToString(),
+                    Label = s.Name
+                }).ToListAsync();
+
+                return soapTypes;
+            }
+            catch (Exception e)
+            {
+                return new List<DropDownListDto>();
+            }
         }
 
         // GET: api/Soaps/5

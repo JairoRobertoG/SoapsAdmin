@@ -37,6 +37,7 @@ export class SoapComponent implements OnInit {
   http: HttpClient;
   form: FormGroup;
   msgs: Message[] = [];
+  dialogmsgs: Message[] = [];
   uploadedFiles: Image[] = [];
   soapType: string;
   dropDown: DropDownList;
@@ -78,7 +79,13 @@ export class SoapComponent implements OnInit {
       });
     }
 
-    this.messageService.add({ severity: 'info', summary: 'File Uploaded', detail: '' });
+    this.dialogmsgs = [];
+    this.dialogmsgs.push({ severity: 'info', summary: 'Las imagenes se subieron con exito.', detail: 'Imagen(s) han sido subidas.' });
+    //this.messageService.add({ severity: 'info', summary: 'File Uploaded', detail: '' });
+  }
+
+  myUploader(event) {
+
   }
 
   sendPostRequest() {
@@ -93,7 +100,7 @@ export class SoapComponent implements OnInit {
         this.soaps.push(result);
         this.closeDialog();
         this.form.reset();
-        this.showSuccess();
+        this.showSuccess('Se agrego el jabon: ' + result.name, 'Jabon Agregado.');
       }, error => console.error(error));
     }
   }
@@ -108,13 +115,13 @@ export class SoapComponent implements OnInit {
       this.soaps = result;
       this.uploadedFiles = [];
       this.edit = false;
-      //this.soaps.re
+      this.showSuccess('Se actualizo el jabon: ' + soap.name, 'Jabon Actualizado.');
     }, error => console.error(error));
   }
 
   addIngredient() {
     if (this.soapDetailName === '' || this.soapDetailName === undefined) {
-      this.showError('Se debe de escribir un ingrediente');
+      this.showError('Se debe de escribir un ingrediente', 'Agregar minimo un ingrediente');
     } else {
       this.soapDetails.push({
         id: 0,
@@ -135,14 +142,14 @@ export class SoapComponent implements OnInit {
     this.msgs.push({ severity: 'info', summary: 'El Jabón: ' + soapName + ' ha sido eliminado con exito', detail: 'Jabón eliminado' });
   }
 
-  showSuccess() {
+  showSuccess(message: string, messageDetail: string) {
     this.msgs = [];
-    this.msgs.push({ severity: 'success', summary: 'Success Message', detail: 'Order submitted' });
+    this.msgs.push({ severity: 'success', summary: message, detail: messageDetail });
   }
 
-  showError(msg: string) {
+  showError(msg: string, messageDetail: string) {
     this.msgs = [];
-    this.msgs.push({ severity: 'error', summary: msg, detail: 'Order submitted' });
+    this.msgs.push({ severity: 'error', summary: msg, detail: messageDetail });
   }
 
   showDialog() {
@@ -158,7 +165,11 @@ export class SoapComponent implements OnInit {
       header: 'Confirmation',
       accept: () => {
         return this.http.delete<Soap>(this.baseUrl + 'soaps/' + soapId).subscribe(result => {
-          this.showRemoveSuccess(result);
+          this.soaps.forEach((value, index) => {
+            if (value.id == result.id) this.soaps.splice(index, 1);
+          });
+
+          this.showRemoveSuccess(result.name);
         }, error => console.error(error));
       }
     });

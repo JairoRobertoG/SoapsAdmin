@@ -28,6 +28,7 @@ import { BuyComponent } from './buy/buy.component';
 import { GalleriaModule } from 'primeng/galleria';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
+import { DataViewModule } from 'primeng/dataview';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { ConfirmationService } from 'primeng/api';
     ProgressSpinnerModule,
     GalleriaModule,
     ConfirmDialogModule,
+    DataViewModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
