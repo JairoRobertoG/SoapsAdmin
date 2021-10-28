@@ -36,6 +36,7 @@ export class SoapComponent implements OnInit {
   baseUrl: string;
   http: HttpClient;
   form: FormGroup;
+  formAdmin: FormGroup;
   msgs: Message[] = [];
   dialogmsgs: Message[] = [];
   uploadedFiles: Image[] = [];
@@ -46,6 +47,7 @@ export class SoapComponent implements OnInit {
   soapDetailName: string;
   imageDialog: boolean = false;
   edit: boolean = false;
+  isLogin: boolean = false;
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string,
               private fb: FormBuilder, private messageService: MessageService,
@@ -69,6 +71,29 @@ export class SoapComponent implements OnInit {
       soapDetails: [0, Validators.required],
       images: [0, Validators.required]
     });
+
+    this.formAdmin = this.fb.group({
+      user: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+  }
+
+  login() {
+    if (this.formAdmin.valid) {
+      const userAdmin = this.formAdmin.getRawValue();
+
+      return this.http.post<UserAdmin>(this.baseUrl + 'login', userAdmin).subscribe(result => {
+        this.isLogin = result.isLogin;
+
+        this.msgs = [];
+        if (this.isLogin) {
+          this.msgs.push({ severity: 'success', summary: 'Login success.', detail: result.message });
+        } else {
+          this.msgs.push({ severity: 'info', summary: 'Login was not successed.', detail: result.message });
+        }
+        
+      }, error => console.error(error));
+    }
   }
 
   onUpload(event) {
@@ -81,7 +106,6 @@ export class SoapComponent implements OnInit {
 
     this.dialogmsgs = [];
     this.dialogmsgs.push({ severity: 'info', summary: 'Las imagenes se subieron con exito.', detail: 'Imagen(s) han sido subidas.' });
-    //this.messageService.add({ severity: 'info', summary: 'File Uploaded', detail: '' });
   }
 
   myUploader(event) {

@@ -15,6 +15,7 @@ export class HomeComponent {
   public soaps: Soap[];
   selectedSoap: Soap;
   displayDialog: boolean;
+  adminDialog: boolean;
   images: any[];
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string, private router: Router) {
@@ -32,7 +33,7 @@ export class HomeComponent {
       this.urlImage = this.imageBase + soap.name;
       this.images.push({ source: this.urlImage, alt: 'Imagen', title: 'Title 1', height: '350', width: '300' });
     });
-    console.log(this.images);
+    
     this.selectedSoap = soap;
     this.displayDialog = true;
     event.preventDefault();
@@ -44,5 +45,13 @@ export class HomeComponent {
 
   onDialogHide() {
     this.selectedSoap = null;
+  }
+
+  openLogin() {
+    this.adminDialog = true;
+  }
+
+  onAdminDialogHide() {
+
   }
 }

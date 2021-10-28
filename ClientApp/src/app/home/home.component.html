@@ -1,10 +1,12 @@
-<h1>Catalogo de Jabones!</h1>
-
 <div>
+  <h1 style="display: flex; justify-content: center">Vida Sana</h1>
+</div>
+
+<div style="display: flex; justify-content: center">
   <p *ngIf="!soaps"><p-progressSpinner></p-progressSpinner></p>
 </div>
 
-<div class="container">
+<div id="soap-details" class="container">
   <div class="row">
     <div class="col-sm-4" *ngFor="let soap of soaps">
       <p-card header="{{ soap.name }}" subheader="{{ soap.soapType.name }}" [style]="{width: '300'}" styleClass="ui-card-shadow">
@@ -18,7 +20,7 @@
           <b style="color: green" *ngIf="soap.available">Disponible</b>
           <b style="color: red" *ngIf="!soap.available">No Disponible</b>
           <button pButton type="button" style="margin-left: 5%" icon="pi pi-search" (click)="selectSoap($event, soap)"></button>
-          <button (click)="goToSoap(soap)" [disabled]="!soap.available" style="margin-left: 5%" pButton type="button" label="Comprar" class="ui-button-rounded ui-button-success"></button>
+          <button (click)="goToSoap(soap)" [disabled]="true" style="margin-left: 5%" pButton type="button" label="Comprar" class="ui-button-rounded ui-button-success"></button>
         </p-footer>
       </p-card>
     </div>
@@ -37,9 +39,6 @@
 
         <div class="ui-g-4">Descripción: </div>
         <div class="ui-g-8">{{ selectedSoap.description }}</div>
-
-        <!--<div class="ui-g-4">Color: </div>
-        <div class="ui-g-8">{{selectedCar.color}}</div>-->
       </div>
     </p-dialog>
   </div>

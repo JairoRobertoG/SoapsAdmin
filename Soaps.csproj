@@ -45,12 +45,16 @@
     <None Remove="ClientApp\src\app\soap\model\soap.ts" />
     <None Remove="ClientApp\src\app\soap\model\soapdetail.ts" />
     <None Remove="ClientApp\src\app\soap\model\soaptype.ts" />
+    <None Remove="ClientApp\src\app\soap\model\userAdmin.ts" />
   </ItemGroup>
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\buy\buy.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\soap\model\dropdownlist.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\soap\model\image.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\soap\model\userAdmin.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\soap\model\soap.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\soap\model\soapdetail.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\soap\model\soaptype.ts" />

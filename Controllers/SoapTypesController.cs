@@ -33,10 +33,18 @@ namespace Soaps.Controllers
                 {
                     using (var transaction = _context.Database.BeginTransaction())
                     {
-                        _context.SoapTypes.Add(new SoapType
+                        _context.SoapTypes.AddRange(new List<SoapType>()
                         {
-                            Id = 1,
-                            Name = "Body"
+                            new SoapType
+                            {
+                                Id = 1,
+                                Name = "Body"
+                            },
+                            new SoapType
+                            {
+                                Id = 2,
+                                Name = "Shampoo"
+                            }
                         });
 
                         _context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.SoapTypes ON;");
