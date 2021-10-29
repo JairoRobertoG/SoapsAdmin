@@ -67,6 +67,7 @@ export class SoapComponent implements OnInit {
       description: ['', Validators.required],
       price: [0.0, Validators.required],
       available: [false],
+      quantity: [0, Validators.required],
       soapTypeId: [0, Validators.required],
       soapDetails: [0, Validators.required],
       images: [0, Validators.required]
@@ -105,7 +106,7 @@ export class SoapComponent implements OnInit {
     }
 
     this.dialogmsgs = [];
-    this.dialogmsgs.push({ severity: 'info', summary: 'Las imagenes se subieron con exito.', detail: 'Imagen(s) han sido subidas.' });
+    this.dialogmsgs.push({ severity: 'info', summary: 'Images were uploaded.', detail: 'Images were uploaded.' });
   }
 
   myUploader(event) {
@@ -124,7 +125,7 @@ export class SoapComponent implements OnInit {
         this.soaps.push(result);
         this.closeDialog();
         this.form.reset();
-        this.showSuccess('Se agrego el jabon: ' + result.name, 'Jabon Agregado.');
+        this.showSuccess('The soap was added: ' + result.name, 'Soap added.');
       }, error => console.error(error));
     }
   }
@@ -139,13 +140,13 @@ export class SoapComponent implements OnInit {
       this.soaps = result;
       this.uploadedFiles = [];
       this.edit = false;
-      this.showSuccess('Se actualizo el jabon: ' + soap.name, 'Jabon Actualizado.');
+      this.showSuccess('The Soap was updated: ' + soap.name, 'Soap uptaded.');
     }, error => console.error(error));
   }
 
   addIngredient() {
     if (this.soapDetailName === '' || this.soapDetailName === undefined) {
-      this.showError('Se debe de escribir un ingrediente', 'Agregar minimo un ingrediente');
+      this.showError('You must to add some ingredient', 'Minimum one ingredient.');
     } else {
       this.soapDetails.push({
         id: 0,
@@ -156,14 +157,15 @@ export class SoapComponent implements OnInit {
     }
   }
 
-  removeIngredient(ingredient: SoapDetail) {
-    const index = this.soapDetails.findIndex(ingredient => ingredient.name === ingredient.name);
+  removeIngredient(ingredientToRemove: SoapDetail) {
+    const index = this.soapDetails.findIndex(ingredient => ingredient.name === ingredientToRemove.name);
+    console.log(index);
     this.soapDetails.splice(index, 1); 
   }
 
   showRemoveSuccess(soapName: string) {
     this.msgs = [];
-    this.msgs.push({ severity: 'info', summary: 'El Jabón: ' + soapName + ' ha sido eliminado con exito', detail: 'Jabón eliminado' });
+    this.msgs.push({ severity: 'info', summary: 'The soap: ' + soapName + ' has been deleted', detail: 'Soap deleted' });
   }
 
   showSuccess(message: string, messageDetail: string) {
@@ -177,6 +179,8 @@ export class SoapComponent implements OnInit {
   }
 
   showDialog() {
+    this.form.reset();
+    
     this.http.get<DropDownList[]>(this.baseUrl + 'soaptypes').subscribe(result => {
       this.soapTypes = result;
       this.display = true;
@@ -185,7 +189,7 @@ export class SoapComponent implements OnInit {
 
   removeSoap(soapId: number) {
     this.confirmationService.confirm({
-      message: 'Estas seguro de borrar este jabon?',
+      message: 'Are you sure to delete this soap?',
       header: 'Confirmation',
       accept: () => {
         return this.http.delete<Soap>(this.baseUrl + 'soaps/' + soapId).subscribe(result => {
@@ -209,7 +213,8 @@ export class SoapComponent implements OnInit {
         name: soap.name,
         description: soap.description,
         price: soap.price,
-        available: soap.available
+        available: soap.available,
+        quantity: soap.quantity
       });
 
       this.dropDown = result.find(e => e.code === soap.soapType.id.toString())

@@ -135,6 +135,7 @@ namespace Soaps.Controllers
             soap.Description = soapDto.Description;
             soap.Available = soapDto.Available;
             soap.Price = soapDto.Price;
+            soap.Quantity = soapDto.Quantity;
             soap.SoapType = await _context.SoapTypes.FindAsync(int.Parse(soapDto.SoapTypeId));
             foreach (var soapDetail in soapDto.SoapDetails)
             {

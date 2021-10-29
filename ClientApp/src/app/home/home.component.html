@@ -9,29 +9,46 @@
 <div id="soap-details" class="container">
   <div class="row">
     <div class="col-sm-4" *ngFor="let soap of soaps">
-      <p-card header="{{ soap.name }}" subheader="{{ soap.soapType.name }}" [style]="{width: '300'}" styleClass="ui-card-shadow">
+      <p-card header="{{ soap.name }}" subheader="Soap Type: {{ soap.soapType.name }}" [style]="{width: '300'}" styleClass="ui-card-shadow">
         <p-header>
           <img src="{{ imageBase }}{{ soap.images[0].name }}" height="350" width="300">
         </p-header>
+        <div class="row">
+          <div class="col-md-6">
+            <b style="color: black">Price: </b>
+            <b style="color: green">{{ soap.price | currency }}</b>
+          </div>
+
+          <div class="col-md-6">
+            <b style="color: black">Quantity: </b>
+            <b style="color: green">{{ soap.quantity }}</b>
+          </div>
+
+        </div>
         <div>
-          <b style="color: green">{{ soap.price | currency }}</b>
+          <b style="color: green" *ngIf="soap.available">Available</b>
+          <b style="color: red" *ngIf="!soap.available">Not Available</b>
         </div>
         <p-footer>
-          <b style="color: green" *ngIf="soap.available">Disponible</b>
-          <b style="color: red" *ngIf="!soap.available">No Disponible</b>
           <button pButton type="button" style="margin-left: 5%" icon="pi pi-search" (click)="selectSoap($event, soap)"></button>
-          <button (click)="goToSoap(soap)" [disabled]="true" style="margin-left: 5%" pButton type="button" label="Comprar" class="ui-button-rounded ui-button-success"></button>
+          <button (click)="goToSoap(soap)" [disabled]="true" style="margin-left: 5%"
+                  pButton type="button" label="Buy" class="ui-button-rounded ui-button-success">
+          </button>
         </p-footer>
       </p-card>
     </div>
 
-    <p-dialog header="Soap Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true" [style]="{width: '80%'}" (onAfterHide)="onDialogHide()">
+    <p-dialog header="Soap Details" [(visible)]="displayDialog" [responsive]="true"
+              showEffect="fade" [modal]="true" [style]="{width: '50%'}"
+              (onAfterHide)="onDialogHide()">
       <div class="ui-g" *ngIf="selectedSoap">
         <div class="ui-g-12" style="text-align:center">
           <p-galleria [images]="images" panelWidth="500" panelHeight="313" [showCaption]="true"></p-galleria>
           <!--<img src="{{ imageBase }}{{ selectedSoap.images[0].name }}" height="350" width="300">-->
         </div>
-        <div class="ui-g-4">Nombre: </div>
+        <div class="ui-g-4">
+          <b>Nombre: </b>
+        </div>
         <div class="ui-g-8">{{ selectedSoap.name }}</div>
 
         <div class="ui-g-4">Precio: </div>

@@ -12,6 +12,8 @@ namespace Soaps.Dto
 
         public bool Available { get; set; }
 
+        public int Quantity { get; set; }
+
         public SoapTypeDto SoapType { get; set; }
 
         public string SoapTypeId { get; set; }

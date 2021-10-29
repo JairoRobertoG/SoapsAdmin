@@ -24,6 +24,9 @@ namespace Soaps.Model
         public bool Available { get; set; }
 
         [Required]
+        public int Quantity { get; set; }
+
+        [Required]
         public ICollection<SoapDetail> SoapDetails { get; set; }
 
         [Required]
